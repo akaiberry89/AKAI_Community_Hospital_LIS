@@ -14,7 +14,7 @@ AKAI Community Hospital LIS is an end-to-end Healthcare Data Architecture platfo
 
 ### Phase 1: Ingestion & Logic Validation (INFM 109 & SDEV 120)
 * **Core Question:** *How is raw healthcare data captured and validated at entry?*
-* **What I'll Build:** Python interface scripts parsing raw HL7 `ORM^O01` streams, extracting `PID`/`OBR` segments, and handling malformed message errors.
+* **What I'll Build:** Foundational healthcare data ingestion and validation workflows, including exploration of HL7 `ORM^O01` laboratory order messages, patient identifiers `PID`, laboratory orders `OBR`, and healthcare data quality concepts.
 
 ### Phase 2: Relational Data Warehousing (DBMS 110 & DBMS 130)
 * **Core Question:** *How should healthcare data be structured, stored, and normalized?*
