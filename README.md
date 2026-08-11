@@ -14,16 +14,16 @@ AKAI Community Hospital LIS is an end-to-end Healthcare Data Architecture platfo
 
 ### Phase 1: Ingestion & Logic Validation (INFM 109 & SDEV 120)
 * **Core Question:** *How is raw healthcare data captured and validated at entry?*
-* **What You Build:** Python interface scripts parsing raw HL7 `ORM^O01` streams, extracting `PID`/`OBR` segments, and handling malformed message errors.
+* **What I'll Build:** Python interface scripts parsing raw HL7 `ORM^O01` streams, extracting `PID`/`OBR` segments, and handling malformed message errors.
 
 ### Phase 2: Relational Data Warehousing (DBMS 110 & DBMS 130)
 * **Core Question:** *How should healthcare data be structured, stored, and normalized?*
-* **What You Build:** Normalized PostgreSQL database schema managing `Patients`, `Specimens`, `Accession_Orders`, and LOINC-mapped `Lab_Results`.
+* **What I'll Build:** Normalized PostgreSQL database schema managing `Patients`, `Specimens`, `Accession_Orders`, and LOINC-mapped `Lab_Results`.
 
 ### Phase 3: Security, Audit & Compliance (HIMT 104 & CSIA 105)
 * **Core Question:** *How is patient data secured and audited for HIPAA compliance?*
-* **What You Build:** Role-Based Access Control (RBAC) policies and immutable `audit_log` triggers tracking all read/write events on Protected Health Information (PHI).
+* **What I'll Build:** Role-Based Access Control (RBAC) policies and immutable `audit_log` triggers tracking all read/write events on Protected Health Information (PHI).
 
 ### Phase 4: Analytics & Executive Decision Support (INFM 219 & CPIN 269)
 * **Core Question:** *How does data drive operational efficiency and patient outcomes?*
-* **What You Build:** Power BI executive dashboards tracking laboratory turnaround times (TAT), specimen rejection rates, and critical flag alerts.
+* **What I'll Build:** Power BI executive dashboards tracking laboratory turnaround times (TAT), specimen rejection rates, and critical flag alerts.
