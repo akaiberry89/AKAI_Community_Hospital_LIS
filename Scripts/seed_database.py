@@ -5,14 +5,17 @@ Simple seed script for AKAI_Community_Hospital_LIS
 - Uses rejection_reason in specimens
 - Inserts lightweight audit_log entries for important actions
 - Keeps result_value as TEXT to match your schema
-- Small robustness: timezone-aware timestamps (UTC), clear Faker unique after run
+- Supports command-line arguments for patients, orders, and database resets
 
-Run: python3 scripts/seed_database.py
+Run examples:
+  python3 scripts/seed_database.py --patients 10 --max-orders 1
+  python3 scripts/seed_database.py --patients 100 --max-orders 5 --reset
 """
 import os
 import logging
 import random
 import json
+import argparse
 from datetime import timedelta, timezone
 
 import psycopg2
@@ -39,6 +42,29 @@ def make_aware(dt):
     return dt
 
 def main():
+    # --- Step 1: Set up Argparse command-line arguments ---
+    parser = argparse.ArgumentParser(
+        description="Synthetic Data Generator for AKAI Community Hospital LIS"
+    )
+    parser.add_argument(
+        "--patients", 
+        type=int, 
+        default=50, 
+        help="Number of patient records to generate (default: 50)"
+    )
+    parser.add_argument(
+        "--max-orders", 
+        type=int, 
+        default=3, 
+        help="Maximum number of lab orders to generate per patient (default: 3)"
+    )
+    parser.add_argument(
+        "--reset", 
+        action="store_true", 
+        help="Wipe all existing database records before seeding new data"
+    )
+    args = parser.parse_args()
+
     conn = None
     cur = None
     try:
@@ -52,11 +78,14 @@ def main():
         cur = conn.cursor()
         logging.info("Connected to %s", DB_NAME)
 
-        # Truncate tables (include audit_log) and restart identities
-        cur.execute(
-            "TRUNCATE patients, users, accession_orders, specimens, lab_results, loinc_map, audit_log RESTART IDENTITY CASCADE;"
-        )
-        logging.info("Truncated tables: patients, users, accession_orders, specimens, lab_results, loinc_map, audit_log")
+        # --- Step 2: Conditional Truncate ---
+        if args.reset:
+            cur.execute(
+                "TRUNCATE patients, users, accession_orders, specimens, lab_results, loinc_map, audit_log RESTART IDENTITY CASCADE;"
+            )
+            logging.info("RESET FLAG DETECTED: Truncated all tables and reset identity sequences.")
+        else:
+            logging.info("APPEND MODE: Appending new records to existing database tables.")
 
         # 1) Seed loinc_map
         loinc_data = [
@@ -75,27 +104,27 @@ def main():
 
         # 2) Seed users
         user_ids = []
-        roles = ['technician', 'clinician', 'admin']
-        for _ in range(5):
-            username = f"user_{fake.user_name()}"
-            display_name = fake.name()
-            role = random.choice(roles)
-            cur.execute(
-                "INSERT INTO users (username, display_name, role) VALUES (%s, %s, %s) RETURNING user_id;",
-                (username, display_name, role),
-            )
-            uid = cur.fetchone()[0]
-            user_ids.append(uid)
-            # audit: user created
-            cur.execute(
-                "INSERT INTO audit_log (user_id, object_type, object_id, action, detail) VALUES (%s, %s, %s, %s, %s);",
-                (uid, 'users', uid, 'create', extras.Json({'username': username, 'role': role})),
-            )
-        logging.info("Seeded users (%d)", len(user_ids))
+        if args.reset:
+            roles = ['technician', 'clinician', 'admin']
+            for _ in range(5):
+                username = f"user_{fake.user_name()}"
+                display_name = fake.name()
+                role = random.choice(roles)
+                cur.execute(
+                    "INSERT INTO users (username, display_name, role) VALUES (%s, %s, %s) RETURNING user_id;",
+                    (username, display_name, role),
+                )
+                uid = cur.fetchone()[0]
+                user_ids.append(uid)
+                cur.execute(
+                    "INSERT INTO audit_log (user_id, object_type, object_id, action, detail) VALUES (%s, %s, %s, %s, %s);",
+                    (uid, 'users', uid, 'create', extras.Json({'username': username, 'role': role})),
+                )
+            logging.info("Seeded users (%d)", len(user_ids))
 
-        # 3) Seed patients (gender-matched names)
+        # 3) Seed patients
         patient_ids = []
-        for _ in range(50):
+        for _ in range(args.patients):
             mrn = f"MRN{fake.unique.random_number(digits=8, fix_len=True)}"
             sex = random.choice(['M', 'F'])
             first_name = fake.first_name_male() if sex == 'M' else fake.first_name_female()
@@ -108,14 +137,13 @@ def main():
             )
             pid = cur.fetchone()[0]
             patient_ids.append(pid)
-            # audit: patient created (no user associated here)
             cur.execute(
                 "INSERT INTO audit_log (user_id, object_type, object_id, action, detail) VALUES (%s, %s, %s, %s, %s);",
                 (None, 'patients', pid, 'create', extras.Json({'mrn': mrn, 'name': f"{first_name} {last_name}"})),
             )
         logging.info("Seeded patients (%d)", len(patient_ids))
 
-        # 4) Seed accession_orders, specimens, lab_results (with rejections)
+        # 4) Seed accession_orders, specimens, lab_results (Controlled by --max-orders)
         flags = ['normal', 'normal', 'normal', 'abnormal', 'critical']
         rejection_reasons = [
             'Hemolyzed',
@@ -125,8 +153,11 @@ def main():
             'Clotted Specimen'
         ]
 
+        total_orders_created = 0
         for p_id in patient_ids:
-            for _ in range(random.randint(1, 3)):
+            num_orders = random.randint(1, max(1, args.max_orders))
+            for _ in range(num_orders):
+                total_orders_created += 1
                 acc_num = f"ACC{fake.unique.random_number(digits=10, fix_len=True)}"
                 provider = f"Dr. {fake.last_name()}"
                 order_time = make_aware(fake.date_time_between(start_date='-30d', end_date='now'))
@@ -136,7 +167,6 @@ def main():
                     (acc_num, p_id, provider, order_time, 'collected'),
                 )
                 order_id = cur.fetchone()[0]
-                # audit: order created
                 cur.execute(
                     "INSERT INTO audit_log (user_id, object_type, object_id, action, detail) VALUES (%s, %s, %s, %s, %s);",
                     (None, 'accession_orders', order_id, 'create', extras.Json({'accession_number': acc_num, 'patient_id': p_id})),
@@ -145,7 +175,7 @@ def main():
                 coll_time = make_aware(order_time + timedelta(minutes=random.randint(15, 60)))
                 rec_time = make_aware(coll_time + timedelta(minutes=random.randint(30, 90)))
 
-                is_rejected = random.random() < 0.10  # 10% rejection
+                is_rejected = random.random() < 0.10
                 rejection_reason = random.choice(rejection_reasons) if is_rejected else None
 
                 cur.execute(
@@ -154,21 +184,16 @@ def main():
                 )
                 specimen_id = cur.fetchone()[0]
 
-                # audit: specimen created (and possibly rejected)
                 cur.execute(
                     "INSERT INTO audit_log (user_id, object_type, object_id, action, detail) VALUES (%s, %s, %s, %s, %s);",
                     (None, 'specimens', specimen_id, 'create', extras.Json({'order_id': order_id, 'rejection_reason': rejection_reason})),
                 )
 
-                if is_rejected:
-                    logging.debug("Specimen %s rejected: %s", specimen_id, rejection_reason)
-                    # You can query WHERE rejection_reason IS NOT NULL to find these
-                else:
+                if not is_rejected:
                     loinc = random.choice(loinc_data)
                     flag = random.choice(flags)
 
-                    # keep result_value as TEXT to match your schema
-                    if loinc[0] == '2345-7':  # Glucose
+                    if loinc[0] == '2345-7':
                         result_value = str(random.randint(65, 180))
                     else:
                         result_value = str(round(random.uniform(3.5, 18.0), 1))
@@ -180,11 +205,12 @@ def main():
                         (specimen_id, loinc[0], loinc[1], result_value, loinc[2], loinc[3], flag, result_time, result_time),
                     )
                     result_id = cur.fetchone()[0]
-                    # audit: result created
                     cur.execute(
                         "INSERT INTO audit_log (user_id, object_type, object_id, action, detail) VALUES (%s, %s, %s, %s, %s);",
                         (None, 'lab_results', result_id, 'create', extras.Json({'specimen_id': specimen_id, 'test_code': loinc[0], 'value': result_value})),
                     )
+
+        logging.info("Seeded accession_orders, specimens, and lab_results (%d orders total)", total_orders_created)
 
         # Finalize
         conn.commit()
@@ -200,7 +226,6 @@ def main():
             cur.close()
         if conn:
             conn.close()
-        # clear Faker unique generator to avoid exhaustion on repeated runs
         try:
             fake.unique.clear()
         except Exception:
