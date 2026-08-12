@@ -1,2 +1,6 @@
-.venv git add .gitignore git commit -m Ignore local virtualenv (.venv) git push origin main
-.vscode git add .gitignore git commit -m Ignore local VS Code workspace settings (.vscode) git push origin main
+.venv
+.vscode
+.env
+__pycache__/
+*.pyc
+*.bak
