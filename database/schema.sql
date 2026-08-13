@@ -1,3 +1,12 @@
+-- Clean Reset (Safe to re-run anytime in development)
+DROP TABLE IF EXISTS audit_log CASCADE;
+DROP TABLE IF EXISTS loinc_map CASCADE;
+DROP TABLE IF EXISTS lab_results CASCADE;
+DROP TABLE IF EXISTS specimens CASCADE;
+DROP TABLE IF EXISTS accession_orders CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS patients CASCADE;
+
 -- Patients
 CREATE TABLE patients (
   patient_id SERIAL PRIMARY KEY,
@@ -5,7 +14,7 @@ CREATE TABLE patients (
   first_name TEXT,
   last_name TEXT,
   dob DATE,
-  sex CHAR(1),
+  sex CHAR(1) CHECK (sex IN ('M', 'F', 'U')),
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
@@ -14,7 +23,7 @@ CREATE TABLE users (
   user_id SERIAL PRIMARY KEY,
   username VARCHAR(64) UNIQUE NOT NULL,
   display_name TEXT,
-  role VARCHAR(32), -- technician, clinician, admin
+  role VARCHAR(32) CHECK (role IN ('technician', 'clinician', 'admin')),
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
@@ -25,7 +34,7 @@ CREATE TABLE accession_orders (
   patient_id INT NOT NULL REFERENCES patients(patient_id),
   ordering_provider VARCHAR(128),
   order_datetime TIMESTAMPTZ NOT NULL,
-  status VARCHAR(32) DEFAULT 'ordered', -- ordered, collected, canceled
+  status VARCHAR(32) DEFAULT 'ordered' CHECK (status IN ('ordered', 'collected', 'canceled')),
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
@@ -37,7 +46,8 @@ CREATE TABLE specimens (
   collection_datetime TIMESTAMPTZ,
   received_datetime TIMESTAMPTZ,
   rejection_reason TEXT, -- NULL if not rejected
-  created_at TIMESTAMPTZ DEFAULT now()
+  created_at TIMESTAMPTZ DEFAULT now(),
+  CONSTRAINT chk_specimen_received_after_collection CHECK (received_datetime >= collection_datetime)
 );
 
 -- Lab results (one per specimen-test)
@@ -49,7 +59,7 @@ CREATE TABLE lab_results (
   result_value TEXT,
   units TEXT,
   ref_range TEXT,
-  result_flag VARCHAR(16), -- normal / abnormal / critical
+  result_flag VARCHAR(16) CHECK (result_flag IN ('normal', 'abnormal', 'critical')),
   result_datetime TIMESTAMPTZ, -- when result finalized
   reported_datetime TIMESTAMPTZ, -- when result delivered/available
   created_at TIMESTAMPTZ DEFAULT now()
