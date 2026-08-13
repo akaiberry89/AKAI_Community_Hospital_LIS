@@ -54,5 +54,4 @@ jobs:
         DB_HOST: localhost
         DB_PORT: 5432
       run: |
-        cd scripts
-        python seed_database.py --patients 10 --max-orders 2 --reset
+        cd scripts && python seed_database.py --patients 10 --max-orders 2 --reset
