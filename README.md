@@ -1,5 +1,5 @@
 # AKAI_Community_Hospital_LIS
-Healthcare Data Engineering portfolio mapping clinical pipelines, SQL databases, HL7 workflows, and executive analytics for AKAI Community Hospital. Each phase is connected to the classes I take in my Informatics program. **A portfolio project documenting a transition from professional musician to healthcare data professional.**
+Healthcare Systems Architecture portfolio mapping clinical pipelines, SQL databases, HL7 workflows, and executive analytics for AKAI Community Hospital. Each phase is connected to the classes I take in my Informatics program. **A portfolio project documenting a transition from professional musician to healthcare data professional.**
 
 
 ## 🎯 Overarching Project Mission
