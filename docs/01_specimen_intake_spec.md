@@ -8,7 +8,7 @@
 ---
 
 ## 🔬 System Overview
-The Specimen Intake & Accessioning module serves as the primary data ingress point for the **AKAI Community Hospital Laboratory Information System**. It intercepts inbound HL7 `ORM^O01` order messages, enforces strict data validation rules, assigns globally unique accession identifiers, and queues validated specimens for analytical instrumentation.
+The Specimen Intake & Accessioning module serves as the primary data ingress point for the **Akai Community Hospital EHR_Informatics Sytem**. It intercepts inbound HL7 `ORM^O01` order messages, enforces strict data validation rules, assigns globally unique accession identifiers, and queues validated specimens for analytical instrumentation.
 
 ---
 
