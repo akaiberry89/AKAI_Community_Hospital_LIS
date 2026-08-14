@@ -4,7 +4,7 @@ Clinical Informatics & Healthcare Systems Portfolio mapping clinical pipelines, 
 
 ## 🎯 Overarching Project Mission
 
-AKAI Community Hospital LIS_EHR_Informatics is an end-to-end Laboratory Information Systems and EHR Application Architecture designed to answer two critical questions:
+AKAI Community Hospital EHR_Informatics is an end-to-end Laboratory Information Systems and EHR Application Architecture designed to answer two critical questions:
 1. **Operational:** *How can a healthcare organization capture, secure, model, and analyze clinical data to improve patient care and executive decision-making?*
 2. **Technical:** *How should healthcare data be collected, stored, secured, organized, and reported so the right people get the right information at the right time?*
 
