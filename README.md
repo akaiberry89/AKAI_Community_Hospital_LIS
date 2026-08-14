@@ -1,4 +1,4 @@
-# AKAI_Community_Hospital_EHR_Informatics_System
+# Akai Community Hospital EHR & Informatics System
 Clinical Informatics & Healthcare Systems Portfolio mapping clinical pipelines, SQL databases, HL7 workflows, and executive analytics for Akai Community Hospital. Each phase is connected to the classes I take in my Informatics program.
 
 
