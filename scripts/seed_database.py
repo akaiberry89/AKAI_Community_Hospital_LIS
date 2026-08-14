@@ -78,10 +78,10 @@ def main():
         cur = conn.cursor()
         logging.info("Connected to %s", DB_NAME)
 
-        # --- Step 2: Conditional Truncate ---
+        # --- Step 2: Conditional Truncate (Reordered safely for Foreign Key constraints) ---
         if args.reset:
             cur.execute(
-                "TRUNCATE patients, users, accession_orders, specimens, lab_results, loinc_map, audit_log RESTART IDENTITY CASCADE;"
+                "TRUNCATE audit_log, lab_results, specimens, accession_orders, users, patients, loinc_map RESTART IDENTITY CASCADE;"
             )
             logging.info("RESET FLAG DETECTED: Truncated all tables and reset identity sequences.")
         else:
@@ -200,14 +200,19 @@ def main():
 
                     result_time = make_aware(rec_time + timedelta(minutes=random.randint(45, 120)))
 
+                    # Updated: Normalized SQL insert matches your new schema
                     cur.execute(
-                        "INSERT INTO lab_results (specimen_id, test_code, test_name, result_value, units, ref_range, result_flag, result_datetime, reported_datetime) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING result_id;",
-                        (specimen_id, loinc[0], loinc[1], result_value, loinc[2], loinc[3], flag, result_time, result_time),
+                        """INSERT INTO lab_results (
+                            specimen_id, loinc_code, result_value, 
+                            result_flag, result_datetime, reported_datetime
+                        ) VALUES (%s, %s, %s, %s, %s, %s) RETURNING result_id;""",
+                        (specimen_id, loinc[0], result_value, flag, result_time, result_time),
                     )
                     result_id = cur.fetchone()[0]
+                    
                     cur.execute(
                         "INSERT INTO audit_log (user_id, object_type, object_id, action, detail) VALUES (%s, %s, %s, %s, %s);",
-                        (None, 'lab_results', result_id, 'create', extras.Json({'specimen_id': specimen_id, 'test_code': loinc[0], 'value': result_value})),
+                        (None, 'lab_results', result_id, 'create', extras.Json({'specimen_id': specimen_id, 'loinc_code': loinc[0], 'value': result_value})),
                     )
 
         logging.info("Seeded accession_orders, specimens, and lab_results (%d orders total)", total_orders_created)
@@ -230,7 +235,3 @@ def main():
             fake.unique.clear()
         except Exception:
             pass
-        logging.info("Connection closed.")
-
-if __name__ == '__main__':
-    main()
