@@ -21,5 +21,5 @@ This workflow describes how a specimen enters the laboratory system.
 ## Related Tables
 
 - patients
-- accession_orders
+- orders
 - specimens
