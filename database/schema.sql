@@ -33,7 +33,7 @@ CREATE TABLE orders (
   patient_id INT NOT NULL REFERENCES patients(patient_id),
   ordering_provider VARCHAR(128),
   order_datetime TIMESTAMPTZ NOT NULL,
-  status VARCHAR(32) DEFAULT 'ordered' CHECK (status IN ('ordered', 'collected', 'canceled')),
+  status VARCHAR(32) DEFAULT 'ordered' CHECK (status IN ('ordered', 'active', 'canceled')),
   created_at TIMESTAMPTZ DEFAULT now()
 );
 

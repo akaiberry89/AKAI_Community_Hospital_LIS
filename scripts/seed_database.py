@@ -81,7 +81,7 @@ def main():
         # --- Step 2: Conditional Truncate (Reordered safely for Foreign Key constraints) ---
         if args.reset:
             cur.execute(
-                "TRUNCATE audit_log, lab_results, specimens, accession_orders, users, patients, loinc_map RESTART IDENTITY CASCADE;"
+                "TRUNCATE audit_log, lab_results, specimens, orders, users, patients, loinc_map RESTART IDENTITY CASCADE;"
             )
             logging.info("RESET FLAG DETECTED: Truncated all tables and reset identity sequences.")
         else:
@@ -143,7 +143,7 @@ def main():
             )
         logging.info("Seeded patients (%d)", len(patient_ids))
 
-        # 4) Seed accession_orders, specimens, lab_results (Controlled by --max-orders)
+        # 4) Seed orders, specimens, lab_results (Controlled by --max-orders)
         flags = ['normal', 'normal', 'normal', 'abnormal', 'critical']
         rejection_reasons = [
             'Hemolyzed',
@@ -163,13 +163,13 @@ def main():
                 order_time = make_aware(fake.date_time_between(start_date='-30d', end_date='now'))
 
                 cur.execute(
-                    "INSERT INTO accession_orders (accession_number, patient_id, ordering_provider, order_datetime, status) VALUES (%s, %s, %s, %s, %s) RETURNING order_id;",
-                    (acc_num, p_id, provider, order_time, 'collected'),
+                    "INSERT INTO orders (patient_id, ordering_provider, order_datetime, status) VALUES (%s, %s, %s, %s) RETURNING order_id;",
+                    (p_id, provider, order_time, 'ordered'),
                 )
                 order_id = cur.fetchone()[0]
                 cur.execute(
                     "INSERT INTO audit_log (user_id, object_type, object_id, action, detail) VALUES (%s, %s, %s, %s, %s);",
-                    (None, 'orders', order_id, 'create', extras.Json({'accession_number': acc_num, 'patient_id': p_id})),
+                    (None, 'orders', order_id, 'create', extras.Json({'patient_id': p_id, 'ordering_provider': provider})),
                 )
 
                 coll_time = make_aware(order_time + timedelta(minutes=random.randint(15, 60)))
@@ -179,14 +179,14 @@ def main():
                 rejection_reason = random.choice(rejection_reasons) if is_rejected else None
 
                 cur.execute(
-                    "INSERT INTO specimens (order_id, specimen_type, collection_datetime, received_datetime, rejection_reason) VALUES (%s, %s, %s, %s, %s) RETURNING specimen_id;",
-                    (order_id, 'blood', coll_time, rec_time, rejection_reason),
+                    "INSERT INTO specimens (order_id, accession_number, specimen_type, collection_datetime, received_datetime, rejection_reason) VALUES (%s, %s, %s, %s, %s, %s) RETURNING specimen_id;",
+                    (order_id, acc_num, 'blood', coll_time, rec_time, rejection_reason),
                 )
                 specimen_id = cur.fetchone()[0]
 
                 cur.execute(
                     "INSERT INTO audit_log (user_id, object_type, object_id, action, detail) VALUES (%s, %s, %s, %s, %s);",
-                    (None, 'specimens', specimen_id, 'create', extras.Json({'order_id': order_id, 'rejection_reason': rejection_reason})),
+                    (None, 'specimens', specimen_id, 'create', extras.Json({'order_id': order_id, 'accession_number': acc_num, 'rejection_reason': rejection_reason})),
                 )
 
                 if not is_rejected:
@@ -215,7 +215,7 @@ def main():
                         (None, 'lab_results', result_id, 'create', extras.Json({'specimen_id': specimen_id, 'loinc_code': loinc[0], 'value': result_value})),
                     )
 
-        logging.info("Seeded accession_orders, specimens, and lab_results (%d orders total)", total_orders_created)
+        logging.info("Seeded orders, specimens, and lab_results (%d orders total)", total_orders_created)
 
         # Finalize
         conn.commit()
