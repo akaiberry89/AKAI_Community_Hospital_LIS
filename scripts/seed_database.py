@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Simple seed script for AKAI_Community_Hospital_LIS
+Simple seed script for Akai_Community_Hospital_EHR_Informatics
 - Matches the provided CREATE TABLE schema
 - Uses rejection_reason in specimens
 - Inserts lightweight audit_log entries for important actions
