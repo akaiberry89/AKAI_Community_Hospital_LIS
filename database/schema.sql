@@ -50,27 +50,27 @@ CREATE TABLE specimens (
   CONSTRAINT chk_specimen_received_after_collection CHECK (received_datetime >= collection_datetime)
 );
 
--- Lab results (one per specimen-test)
+-- LOINC mapping / lookup master directory
+CREATE TABLE loinc_map (
+  loinc_code VARCHAR(32) PRIMARY KEY,
+  test_name TEXT NOT NULL,
+  units TEXT,
+  ref_range TEXT
+);
+
+-- Lab results (Normalized: Holds transactional data linked to loinc_map)
 CREATE TABLE lab_results (
   result_id SERIAL PRIMARY KEY,
   specimen_id INT NOT NULL REFERENCES specimens(specimen_id),
-  test_code VARCHAR(32) NOT NULL, -- LOINC or internal code
-  test_name TEXT,
+  
+  -- Relational key linked directly to loinc_map(loinc_code)
+  loinc_code VARCHAR(32) NOT NULL REFERENCES loinc_map(loinc_code), 
+  
   result_value TEXT,
-  units TEXT,
-  ref_range TEXT,
   result_flag VARCHAR(16) CHECK (result_flag IN ('normal', 'abnormal', 'critical')),
   result_datetime TIMESTAMPTZ, -- when result finalized
   reported_datetime TIMESTAMPTZ, -- when result delivered/available
   created_at TIMESTAMPTZ DEFAULT now()
-);
-
--- LOINC mapping / lookup (optional)
-CREATE TABLE loinc_map (
-  loinc_code VARCHAR(32) PRIMARY KEY,
-  test_name TEXT,
-  units TEXT,
-  ref_range TEXT
 );
 
 -- Simple audit log for PHI access/actions
@@ -84,9 +84,9 @@ CREATE TABLE audit_log (
   detail JSONB
 );
 
--- Indexes for common queries
+-- Indexes for optimized relational query performance
 CREATE INDEX idx_orders_order_datetime ON accession_orders(order_datetime);
 CREATE INDEX idx_specimens_collection_datetime ON specimens(collection_datetime);
 CREATE INDEX idx_results_result_datetime ON lab_results(result_datetime);
-CREATE INDEX idx_results_test_code ON lab_results(test_code);
+CREATE INDEX idx_results_loinc_code ON lab_results(loinc_code);
 CREATE INDEX idx_results_flag ON lab_results(result_flag);
