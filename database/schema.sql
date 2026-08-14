@@ -1,8 +1,17 @@
--- Clean Reset (Safe to re-run anytime in development)
+-- Cleanup old indexes (safe to rerun)
+DROP INDEX IF EXISTS idx_orders_order_datetime;
+DROP INDEX IF EXISTS idx_specimens_collection_datetime;
+DROP INDEX IF EXISTS idx_specimens_accession_number;
+DROP INDEX IF EXISTS idx_results_result_datetime;
+DROP INDEX IF EXISTS idx_results_loinc_code;
+DROP INDEX IF EXISTS idx_results_flag;
+
+-- Cleanup old tables (including legacy table name)
 DROP TABLE IF EXISTS audit_log CASCADE;
 DROP TABLE IF EXISTS loinc_map CASCADE;
 DROP TABLE IF EXISTS lab_results CASCADE;
 DROP TABLE IF EXISTS specimens CASCADE;
+DROP TABLE IF EXISTS accession_orders CASCADE;
 DROP TABLE IF EXISTS orders CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS patients CASCADE;
@@ -41,7 +50,7 @@ CREATE TABLE orders (
 CREATE TABLE specimens (
   specimen_id SERIAL PRIMARY KEY,
   order_id INT NOT NULL REFERENCES orders(order_id),
-  accession_number VARCHAR(64),
+  accession_number VARCHAR(64) UNIQUE NOT NULL,
   specimen_type VARCHAR(64), -- e.g., blood, urine
   collection_datetime TIMESTAMPTZ,
   received_datetime TIMESTAMPTZ,
@@ -85,9 +94,15 @@ CREATE TABLE audit_log (
 );
 
 -- Indexes for optimized relational query performance
-CREATE INDEX idx_orders_order_datetime ON orders(order_datetime);
-CREATE INDEX idx_specimens_collection_datetime ON specimens(collection_datetime);
-CREATE INDEX idx_specimens_accession_number ON specimens(accession_number);
-CREATE INDEX idx_results_result_datetime ON lab_results(result_datetime);
-CREATE INDEX idx_results_loinc_code ON lab_results(loinc_code);
-CREATE INDEX idx_results_flag ON lab_results(result_flag);
+CREATE INDEX IF NOT EXISTS idx_orders_order_datetime
+ON orders(order_datetime);
+CREATE INDEX IF NOT EXISTS idx_specimens_collection_datetime
+ON specimens(collection_datetime);
+CREATE INDEX IF NOT EXISTS idx_specimens_accession_number
+ON specimens(accession_number);
+CREATE INDEX IF NOT EXISTS idx_results_result_datetime
+ON lab_results(result_datetime);
+CREATE INDEX IF NOT EXISTS idx_results_loinc_code
+ON lab_results(loinc_code);
+CREATE INDEX IF NOT EXISTS idx_results_flag
+ON lab_results(result_flag);
