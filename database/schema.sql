@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS audit_log CASCADE;
 DROP TABLE IF EXISTS loinc_map CASCADE;
 DROP TABLE IF EXISTS lab_results CASCADE;
 DROP TABLE IF EXISTS specimens CASCADE;
-DROP TABLE IF EXISTS accession_orders CASCADE;
+DROP TABLE IF EXISTS orders CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS patients CASCADE;
 
@@ -27,10 +27,9 @@ CREATE TABLE users (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
--- Accession orders (orders placed for lab tests)
-CREATE TABLE accession_orders (
+-- Orders (orders placed for lab tests)
+CREATE TABLE orders (
   order_id SERIAL PRIMARY KEY,
-  accession_number VARCHAR(64) UNIQUE NOT NULL,
   patient_id INT NOT NULL REFERENCES patients(patient_id),
   ordering_provider VARCHAR(128),
   order_datetime TIMESTAMPTZ NOT NULL,
@@ -41,7 +40,8 @@ CREATE TABLE accession_orders (
 -- Specimens collected for an order (one order may have multiple specimens)
 CREATE TABLE specimens (
   specimen_id SERIAL PRIMARY KEY,
-  order_id INT NOT NULL REFERENCES accession_orders(order_id),
+  order_id INT NOT NULL REFERENCES orders(order_id),
+  accession_number VARCHAR(64),
   specimen_type VARCHAR(64), -- e.g., blood, urine
   collection_datetime TIMESTAMPTZ,
   received_datetime TIMESTAMPTZ,
@@ -85,8 +85,9 @@ CREATE TABLE audit_log (
 );
 
 -- Indexes for optimized relational query performance
-CREATE INDEX idx_orders_order_datetime ON accession_orders(order_datetime);
+CREATE INDEX idx_orders_order_datetime ON orders(order_datetime);
 CREATE INDEX idx_specimens_collection_datetime ON specimens(collection_datetime);
+CREATE INDEX idx_specimens_accession_number ON specimens(accession_number);
 CREATE INDEX idx_results_result_datetime ON lab_results(result_datetime);
 CREATE INDEX idx_results_loinc_code ON lab_results(loinc_code);
 CREATE INDEX idx_results_flag ON lab_results(result_flag);

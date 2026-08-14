@@ -169,7 +169,7 @@ def main():
                 order_id = cur.fetchone()[0]
                 cur.execute(
                     "INSERT INTO audit_log (user_id, object_type, object_id, action, detail) VALUES (%s, %s, %s, %s, %s);",
-                    (None, 'accession_orders', order_id, 'create', extras.Json({'accession_number': acc_num, 'patient_id': p_id})),
+                    (None, 'orders', order_id, 'create', extras.Json({'accession_number': acc_num, 'patient_id': p_id})),
                 )
 
                 coll_time = make_aware(order_time + timedelta(minutes=random.randint(15, 60)))
