@@ -1,10 +1,10 @@
-# AKAI_Community_Hospital_EHR_Informatics
-Clinical Informatics & Healthcare Systems Portfolio mapping clinical pipelines, SQL databases, HL7 workflows, and executive analytics for AKAI Community Hospital. Each phase is connected to the classes I take in my Informatics program.
+# AKAI_Community_Hospital_EHR_Informatics_System
+Clinical Informatics & Healthcare Systems Portfolio mapping clinical pipelines, SQL databases, HL7 workflows, and executive analytics for Akai Community Hospital. Each phase is connected to the classes I take in my Informatics program.
 
 
 ## 🎯 Overarching Project Mission
 
-AKAI Community Hospital EHR_Informatics is an end-to-end Laboratory Information Systems and EHR Application Architecture designed to answer two critical questions:
+Akai Community Hospital EHR & Informatics System is an end-to-end Laboratory Information Systems and EHR Application Architecture designed to answer two critical questions:
 1. **Operational:** *How can a healthcare organization capture, secure, model, and analyze clinical data to improve patient care and executive decision-making?*
 2. **Technical:** *How should healthcare data be collected, stored, secured, organized, and reported so the right people get the right information at the right time?*
 
