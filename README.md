@@ -12,18 +12,18 @@ AKAI Community Hospital LIS is an end-to-end Laboratory Information Systems and 
 
 ## 🗺️ Curriculum Mapping & Architecture Deliverables
 
-### Phase 1: Ingestion & Logic Validation (INFM 109 & SDEV 120)
-* **Core Question:** *How is raw healthcare data captured and validated at entry?*
-* **What I'll Build:** Foundational healthcare data ingestion and validation workflows, including exploration of HL7 `ORM^O01` laboratory order messages, patient identifiers `PID`, laboratory orders `OBR`, and healthcare data quality concepts.
+### Phase 1: HL7 Interface Engineering & Logic Validation (INFM 109 & SDEV 120)
+* **Core Question:** *How are external laboratory instrument interfaces validated, and how is raw clinical data ingested securely into the EHR?*
+* **What I'll Build:** End-to-end interface validation workflows simulating an EHR inbound engine. This includes parsing and validating inbound HL7 `ORM^O01` (Laboratory Order) and `ORU^R01` (Observation Result) messages. It focuses on validating Patient Identification `PID`, Common Order `ORC`, and Observation Request `OBR` segments to eliminate interface parsing faults before they hit clinical environments.
 
-### Phase 2: Relational Data Warehousing (DBMS 110 & DBMS 130)
-* **Core Question:** *How should healthcare data be structured, stored, and normalized?*
+### Phase 2: Clinical Data Dictionary & Relational Architecture (DBMS 110 & DBMS 130)
+* **Core Question:** *How are complex laboratory master files, specimen records, and clinical dictionaries structured to ensure data integrity?*
 * **What I'll Build:** Normalized PostgreSQL database schema managing `Patients`, `Specimens`, `Accession_Orders`, and LOINC-mapped `Lab_Results`.
 
 ### Phase 3: Security, Audit & Compliance (HIMT 104 & CSIA 105)
 * **Core Question:** *How is patient data secured and audited for HIPAA compliance?*
 * **What I'll Build:** Role-Based Access Control (RBAC) policies and immutable `audit_log` triggers tracking all read/write events on Protected Health Information (PHI).
 
-### Phase 4: Analytics & Executive Decision Support (INFM 219 & CPIN 269)
+### Phase 4: Clinical Systems Reporting & Performance Analytics (INFM 219 & CPIN 269)
 * **Core Question:** *How does data drive operational efficiency and patient outcomes?*
 * **What I'll Build:** Power BI executive dashboards tracking laboratory turnaround times (TAT), specimen rejection rates, and critical flag alerts.
