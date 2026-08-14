@@ -4,7 +4,7 @@ Clinical Informatics & Healthcare Systems Portfolio mapping clinical pipelines, 
 
 ## 🎯 Overarching Project Mission
 
-Akai Community Hospital EHR & Informatics System is an end-to-end Laboratory Information Systems and EHR Application Architecture designed to answer two critical questions:
+Akai Community Hospital EHR & Informatics System is an end-to-end Laboratory Information System (LIS) and EHR application architecture portfolio designed to answer two critical questions:
 1. **Operational:** *How can a healthcare organization capture, secure, model, and analyze clinical data to improve patient care and executive decision-making?*
 2. **Technical:** *How should healthcare data be collected, stored, secured, organized, and reported so the right people get the right information at the right time?*
 
@@ -18,11 +18,11 @@ Akai Community Hospital EHR & Informatics System is an end-to-end Laboratory Inf
 
 ### Phase 2: Clinical Data Dictionary & Relational Architecture (DBMS 110 & DBMS 130)
 * **Core Question:** *How are complex laboratory master files, specimen records, and clinical dictionaries structured to ensure data integrity?*
-* **What I'm Building:** Normalized PostgreSQL database schema managing `Patients`, `Specimens`, `Accession_Orders`, and LOINC-mapped `Lab_Results`.
+* **What I'm Building:** Normalized PostgreSQL database schema managing `Patients`, `Specimens`, `Orders`, and `LOINC`-mapped `Lab_Results`.
 
 ### Phase 3: Security, Audit & Compliance (HIMT 104 & CSIA 105)
 * **Core Question:** *How is patient data secured and audited for HIPAA compliance?*
-* **What I'm Building:** Role-Based Access Control (RBAC) policies and immutable `audit_log` triggers tracking all read/write events on Protected Health Information (PHI).
+* **What I'm Building:** Role-Based Access Control (RBAC) concepts and `audit_log` architecture designed to support HIPAA-aligned monitoring of Protected Health Information (PHI).
 
 ### Phase 4: Clinical Systems Reporting & Performance Analytics (INFM 219 & CPIN 269)
 * **Core Question:** *How does data drive operational efficiency and patient outcomes?*
