@@ -1,5 +1,5 @@
 # Akai Community Hospital EHR & Informatics System
-Clinical Informatics & Healthcare Systems Portfolio mapping clinical pipelines, SQL databases, HL7 workflows, and executive analytics for Akai Community Hospital. Each phase is connected to the classes I take in my Informatics program.
+Clinical Informatics and Healthcare Systems portfolio demonstrating clinical workflows, HL7 interoperability, SQL database design, healthcare analytics, and EHR architecture through the Akai Community Hospital project. Each phase is connected to the classes I take in my Informatics program.
 
 
 ## 🎯 Overarching Project Mission
@@ -18,7 +18,7 @@ Akai Community Hospital EHR & Informatics System is an end-to-end Laboratory Inf
 
 ### Phase 2: Clinical Data Dictionary & Relational Architecture (DBMS 110 & DBMS 130)
 * **Core Question:** *How are complex laboratory master files, specimen records, and clinical dictionaries structured to ensure data integrity?*
-* **What I'm Building:** Normalized PostgreSQL database schema managing `Patients`, `Specimens`, `Orders`, and `LOINC`-mapped `Lab_Results`.
+* **What I'm Building:** Normalized PostgreSQL database schema managing `Patients`, `Specimens`, `Orders`, and `LOINC_Map` `Lab_Results`, and audit logging for clinical data integrity.
 
 ### Phase 3: Security, Audit & Compliance (HIMT 104 & CSIA 105)
 * **Core Question:** *How is patient data secured and audited for HIPAA compliance?*
