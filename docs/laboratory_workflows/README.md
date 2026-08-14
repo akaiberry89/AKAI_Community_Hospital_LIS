@@ -1,6 +1,6 @@
 # Laboratory Workflows
 
-This folder contains workflow documentation for the AKAI Community Hospital Laboratory Information System (LIS).
+This folder contains workflow documentation for the Akai Community Hospital EHR_Informatics.
 
 The purpose of these documents is to explain how information moves through the laboratory and why database entities exist.
 
