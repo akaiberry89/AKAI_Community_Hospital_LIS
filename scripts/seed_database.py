@@ -41,6 +41,7 @@ def make_aware(dt):
         return dt.replace(tzinfo=timezone.utc)
     return dt
 
+
 def main():
     # --- Step 1: Set up Argparse command-line arguments ---
     parser = argparse.ArgumentParser(
@@ -178,6 +179,7 @@ def main():
                 is_rejected = random.random() < 0.10
                 rejection_reason = random.choice(rejection_reasons) if is_rejected else None
 
+                # Fixed: properly pass SQL and params as separate arguments
                 cur.execute(
                     "INSERT INTO specimens (order_id, accession_number, specimen_type, collection_datetime, received_datetime, rejection_reason) VALUES (%s, %s, %s, %s, %s, %s) RETURNING specimen_id;",
                     (order_id, acc_num, 'blood', coll_time, rec_time, rejection_reason),
@@ -209,7 +211,7 @@ def main():
                         (specimen_id, loinc[0], result_value, flag, result_time, result_time),
                     )
                     result_id = cur.fetchone()[0]
-                    
+
                     cur.execute(
                         "INSERT INTO audit_log (user_id, object_type, object_id, action, detail) VALUES (%s, %s, %s, %s, %s);",
                         (None, 'lab_results', result_id, 'create', extras.Json({'specimen_id': specimen_id, 'loinc_code': loinc[0], 'value': result_value})),
@@ -235,3 +237,7 @@ def main():
             fake.unique.clear()
         except Exception:
             pass
+
+
+if __name__ == "__main__":
+    main()
