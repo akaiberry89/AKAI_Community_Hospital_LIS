@@ -103,9 +103,9 @@ def main():
             )
         logging.info("Seeded loinc_map (%d rows)", len(loinc_data))
 
-         # 2) Seed users
-         user_ids = []
-         if args.reset:
+        # 2) Seed users
+        user_ids = []
+        if args.reset:
             roles = ['technician', 'clinician', 'admin']
             for _ in range(5):
                 username = f"user_{fake.user_name()}"
@@ -153,7 +153,7 @@ def main():
             patient_ids.append(pid)
             cur.execute(
                 "INSERT INTO audit_log (user_id, object_type, object_id, action, detail) VALUES (%s, %s, %s, %s, %s);",
-                (random.choice(user-ids), 'patients', pid, 'create', extras.Json({'mrn': mrn, 'name': f"{first_name} {last_name}"})),
+                (random.choice(user_ids), 'patients', pid, 'create', extras.Json({'mrn': mrn, 'name': f"{first_name} {last_name}"})),
             )
         logging.info("Seeded patients (%d)", len(patient_ids))
 
