@@ -86,3 +86,15 @@ SELECT
 FROM lab_results lr
 JOIN loinc_map lm
     ON lr.loinc_code = lm.loinc_code;
+
+-- ============================================================================
+-- QUERY 006: Patient Laboratory Result Report
+-- BUSINESS QUESTION:
+-- Show patient names, test names, and laboratory result values.
+--
+-- SKILLS:
+-- 5-table JOIN
+-- LOINC Integration
+-- Clinical workflow reporting
+-- Relational data
+-- ============================================================================
