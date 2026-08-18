@@ -109,22 +109,18 @@ ORDER BY p.last_name ASC;
 
 
 -- ============================================================================
--- NOTES
+-- FUTURE TOPICS
 -- ============================================================================
 --
--- As SQL Academy continues, add:
---
--- LEFT JOIN practice
--- HAVING practice
--- Subquery practice
--- Date/time analytics
--- Turnaround-time calculations
--- Audit log analysis
--- Executive dashboard queries
---
--- When a query becomes polished and useful for a portfolio,
--- move it to:
---
--- sql/AKAI_LIS_SQL_Query_Portfolio.sql
+-- LEFT JOIN
+-- HAVING
+-- CASE
+-- Subqueries
+-- Common Table Expressions (CTEs)
+-- Window Functions
+-- Turnaround Time Analytics
+-- Audit Log Reporting
+-- LOINC Utilization Reporting
+-- Power BI Dashboard Support Queries
 --
 -- ============================================================================
