@@ -103,9 +103,9 @@ def main():
             )
         logging.info("Seeded loinc_map (%d rows)", len(loinc_data))
 
-        # 2) Seed users
-        user_ids = []
-        if args.reset:
+         # 2) Seed users
+         user_ids = []
+         if args.reset:
             roles = ['technician', 'clinician', 'admin']
             for _ in range(5):
                 username = f"user_{fake.user_name()}"
@@ -122,6 +122,19 @@ def main():
                     (uid, 'users', uid, 'create', extras.Json({'username': username, 'role': role})),
                 )
             logging.info("Seeded users (%d)", len(user_ids))
+        else:
+            # Fetch existing users from the database if not resetting
+            cur.execute("SELECT user_id FROM users;")
+            user_ids = [row[0] for row in cur.fetchall()]
+            
+            # Fallback safety: If table is empty, create one default user
+            if not user_ids:
+                cur.execute(
+                    "INSERT INTO users (username, display_name, role) VALUES (%s, %s, %s) RETURNING user_id;",
+                    ("sys_admin", "System Admin", "admin"),
+                )
+                user_ids.append(cur.fetchone()[0])
+            logging.info("Loaded existing users for append mode (%d users available)", len(user_ids))
 
         # 3) Seed patients
         patient_ids = []
@@ -140,7 +153,7 @@ def main():
             patient_ids.append(pid)
             cur.execute(
                 "INSERT INTO audit_log (user_id, object_type, object_id, action, detail) VALUES (%s, %s, %s, %s, %s);",
-                (None, 'patients', pid, 'create', extras.Json({'mrn': mrn, 'name': f"{first_name} {last_name}"})),
+                (random.choice(user-ids), 'patients', pid, 'create', extras.Json({'mrn': mrn, 'name': f"{first_name} {last_name}"})),
             )
         logging.info("Seeded patients (%d)", len(patient_ids))
 
@@ -170,7 +183,7 @@ def main():
                 order_id = cur.fetchone()[0]
                 cur.execute(
                     "INSERT INTO audit_log (user_id, object_type, object_id, action, detail) VALUES (%s, %s, %s, %s, %s);",
-                    (None, 'orders', order_id, 'create', extras.Json({'patient_id': p_id, 'ordering_provider': provider})),
+                    (random.choice(user_ids), 'orders', order_id, 'create', extras.Json({'patient_id': p_id, 'ordering_provider': provider})),
                 )
 
                 coll_time = make_aware(order_time + timedelta(minutes=random.randint(15, 60)))
@@ -188,7 +201,7 @@ def main():
 
                 cur.execute(
                     "INSERT INTO audit_log (user_id, object_type, object_id, action, detail) VALUES (%s, %s, %s, %s, %s);",
-                    (None, 'specimens', specimen_id, 'create', extras.Json({'order_id': order_id, 'accession_number': acc_num, 'rejection_reason': rejection_reason})),
+                    (random.choice(user_ids), 'specimens', specimen_id, 'create', extras.Json({'order_id': order_id, 'accession_number': acc_num, 'rejection_reason': rejection_reason})),
                 )
 
                 if not is_rejected:
@@ -214,7 +227,7 @@ def main():
 
                     cur.execute(
                         "INSERT INTO audit_log (user_id, object_type, object_id, action, detail) VALUES (%s, %s, %s, %s, %s);",
-                        (None, 'lab_results', result_id, 'create', extras.Json({'specimen_id': specimen_id, 'loinc_code': loinc[0], 'value': result_value})),
+                        (random.choice(user_ids), 'lab_results', result_id, 'create', extras.Json({'specimen_id': specimen_id, 'loinc_code': loinc[0], 'value': result_value})),
                     )
 
         logging.info("Seeded orders, specimens, and lab_results (%d orders total)", total_orders_created)
