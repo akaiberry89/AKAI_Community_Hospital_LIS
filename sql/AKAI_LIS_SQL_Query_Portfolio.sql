@@ -66,3 +66,23 @@ JOIN specimens s
     ON o.order_id = s.order_id
 WHERE s.rejection_reason IS NOT NULL
 ORDER BY s.accession_number ASC;
+
+-- ============================================================================
+-- QUERY 005: Human-Readable Laboratory Results
+-- BUSINESS QUESTION:
+-- Show laboratory results using human-readable test name rather than LOINC code.
+--
+-- SKILLS:
+-- Normalization
+-- LOINC Integration
+-- JOINs
+-- Clinical terminology
+-- ============================================================================
+
+SELECT
+    lr.result_id,
+    lm.test_name,
+    lr.result_value
+FROM lab_results lr
+JOIN loinc_map lm
+    ON lr.loinc_code = lm.loinc_code;
