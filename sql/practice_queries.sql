@@ -108,19 +108,4 @@ ORDER BY p.last_name ASC;
 
 
 
--- ============================================================================
--- FUTURE TOPICS
--- ============================================================================
---
--- LEFT JOIN
--- HAVING
--- CASE
--- Subqueries
--- Common Table Expressions (CTEs)
--- Window Functions
--- Turnaround Time Analytics
--- Audit Log Reporting
--- LOINC Utilization Reporting
--- Power BI Dashboard Support Queries
---
--- ============================================================================
+
