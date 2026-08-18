@@ -98,3 +98,18 @@ JOIN loinc_map lm
 -- Clinical workflow reporting
 -- Relational data
 -- ============================================================================
+
+SELECT
+    p.first_name,
+    p.last_name,
+    lm.test_name,
+    lr.result_value
+FROM patients p
+JOIN orders o
+    ON p.patient_id = o.patient_id
+JOIN specimens s
+    ON o.order_id = s.order_id
+JOIN lab_results lr
+    ON s.specimen_id = lr.specimen_id
+JOIN loinc_map lm
+    ON lr.loinc_code = lm.loinc_code;
