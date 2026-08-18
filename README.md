@@ -27,3 +27,52 @@ Akai Community Hospital EHR & Informatics System is an end-to-end Laboratory Inf
 ### Phase 4: Clinical Systems Reporting & Performance Analytics (INFM 219 & CPIN 269)
 * **Core Question:** *How does data drive operational efficiency and patient outcomes?*
 * **What I'm Building:** Power BI executive dashboards tracking laboratory turnaround times (TAT), specimen rejection rates, and critical flag alerts.
+
+## 🚀 How to Run and Setup the LIS Database Locally
+
+Follow these steps to clone this repository, construct the relational schema, and seed the database with synthetic clinical records.
+
+### 1. Prerequisites
+Ensure you have the following installed on your local machine:
+* **Python 3.10+**
+* **Git**
+* **Database Engine:** PostgreSQL (with pgAdmin 4) OR Microsoft SQL Server (with Azure Data Studio / SSMS)
+
+### 2. Clone the Repository
+Open your terminal and run the following commands to pull the master files:
+```bash
+git clone https://github.com
+cd Akai_Community_Hospital_EHR_Informatics_System
+```
+
+### 3. Install Dependencies
+Install the required database drivers and the data generation library (`Faker`) using pip:
+```bash
+# For PostgreSQL environments (Mac/Linux/Windows local setups)
+pip install psycopg2-binary faker
+
+# For Microsoft SQL Server environments (School/Windows setups)
+pip install pyodbc mssql faker
+```
+
+### 4. Build the Database Schema
+Create a blank database named `akai_lis`, open your database tool's Query Window, and execute the corresponding architectural script:
+
+* **If using PostgreSQL:** Execute the table definitions found in `database/schema.sql`.
+* **If using Microsoft SQL Server:** Execute the table definitions found in `database/schema_sql_server.sql`.
+
+### 5. Seed Synthetic Clinical Data
+Run the correct automated Python engine that matches your database platform to populate empty tables with realistic patient demographics, lab orders, and results:
+
+```bash
+# For PostgreSQL (Native Mac setup)
+python3 scripts/seed_database.py --patients 50 --max-orders 3
+
+# For Microsoft SQL Server (School/Windows setup)
+python3 scripts/seed_database_sql_server.py --patients 50 --max-orders 3
+```
+*Note: To wipe existing data and start a fresh simulation run, append the `--reset` flag to the command.*
+
+### 6. Verify Analytical Outputs
+Once seeded, open and run the pre-built reporting queries saved inside the `sql/` workspace directory to review clinical KPIs, processing turnaround times, and audit trails.
+
