@@ -1,0 +1,55 @@
+# AKAI Community Hospital LIS
+## Future Enhancements
+
+### Audit Log Improvements
+
+- [ ] Evaluate making `audit_log.user_id` NOT NULL
+- [ ] Add dedicated `system` user account for automated processes
+- [ ] Ensure all audit events are attributable to either:
+  - Human User
+  - System Process (In a lab, sometimes a system updates overnight without a user input)
+- [ ] Review audit trail design against healthcare compliance best practices
+
+### Audit Reporting
+
+- [ ] Create report showing actions by user
+- [ ] Create report showing actions by object type
+- [ ] Create report showing actions by date/time
+- [ ] Create report showing most active users
+
+### Database Enhancements
+
+- [ ] Investigate additional indexes for reporting queries
+- [ ] Review normalization opportunities
+- [ ] Add more realistic workflow statuses
+- [ ] Expand specimen lifecycle tracking
+
+### HL7 Enhancements
+
+- [ ] Simulate ORM^O01 order messages
+- [ ] Simulate ORU^R01 result messages
+- [ ] Add HL7 message logging table
+- [ ] Create HL7 interface monitoring dashboard queries
+
+### Security & Compliance
+
+- [ ] Review role-based access concepts
+- [ ] Evaluate audit retention requirements
+- [ ] Add support for update/delete audit events
+- [ ] Document security assumptions
+
+### Documentation
+
+- [ ] Update ERD screenshots
+- [ ] Document foreign key relationships
+- [ ] Create workflow diagrams
+- [ ] Write database architecture overview
+
+### Learning Topics
+
+- [ ] Revisit `information_schema`
+- [ ] Learn metadata queries
+- [ ] Explore PostgreSQL system catalogs
+- [ ] Learn indexes and query plans
+- [ ] Learn database views
+- [ ] Learn stored procedures and triggers
