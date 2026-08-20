@@ -3,7 +3,8 @@
 
 ### Audit Log Improvements
 
-- [ ] Evaluate making `audit_log.user_id` NOT NULL
+- [x] Ensure seed data assigns `user_id` to all audit records
+- [ ] Evaluate enforcing `audit_log.user_id` as NOT NULL in db schema (constraint)
 - [ ] Add dedicated `system` user account for automated processes
 - [ ] Ensure all audit events are attributable to either:
   - Human User
