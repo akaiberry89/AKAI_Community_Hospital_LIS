@@ -10,7 +10,6 @@
 -- QUERY 001: Rejected Specimen Count
 -- BUSINESS QUESTION:
 -- How many specimens were rejected?
--- ============================================================================
 
 SELECT COUNT(*)
 FROM specimens
@@ -20,7 +19,6 @@ WHERE rejection_reason IS NOT NULL;
 -- QUERY 002: Rejection Reason Summary
 -- BUSINESS QUESTION:
 -- How many specimens were rejected for each reason?
--- ============================================================================
 
 SELECT
     rejection_reason,
@@ -33,7 +31,6 @@ GROUP BY rejection_reason;
 -- QUERY 003: Provider Order Volume
 -- BUSINESS QUESTION:
 -- How many orders has each provider placed?
--- ============================================================================
 
 SELECT
     ordering_provider,
@@ -52,7 +49,6 @@ ORDER BY total_orders DESC;
 -- WHERE
 -- ORDER BY
 -- Healthcare Quality Assurance Reporting
--- ============================================================================
 
 SELECT
     p.first_name,
@@ -77,7 +73,6 @@ ORDER BY s.accession_number ASC;
 -- LOINC Integration
 -- JOINs
 -- Clinical terminology
--- ============================================================================
 
 SELECT
     lr.result_id,
@@ -97,7 +92,6 @@ JOIN loinc_map lm
 -- LOINC Integration
 -- Clinical workflow reporting
 -- Relational data
--- ============================================================================
 
 SELECT
     p.first_name,
@@ -113,3 +107,27 @@ JOIN lab_results lr
     ON s.specimen_id = lr.specimen_id
 JOIN loinc_map lm
     ON lr.loinc_code = lm.loinc_code;
+
+-- ============================================================================
+-- QUERY 007: Patient Order Volume Report
+-- BUSINESS QUESTION:
+-- How many lab orders has each patient received?
+--
+-- SKILLS:
+-- INNER JOIN
+-- COUNT Aggregate Function
+-- GROUP BY
+-- ORDER BY
+-- Healthcare Operational Analytics
+
+SELECT
+    p.first_name || ' ' || p.last_name AS patient_name,
+    COUNT(o.order_id) AS total_orders
+FROM patients p
+JOIN orders o
+    ON p.patient_id = o.patient_id
+GROUP BY
+    p.patient_id,
+    p.first_name,
+    p.last_name
+ORDER BY total_orders DESC;
